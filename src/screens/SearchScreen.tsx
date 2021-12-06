@@ -1,10 +1,13 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import SearchInput from '../components/Search';
 
 const SearchScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
-      <Text>Search input</Text>
+      <SearchInput loading={false} onSearch={(value: string) => {
+          console.log('Value: ', value);
+      }}/>
       <Button
         title="Go to details"
         onPress={() => navigation.navigate('Details')}
