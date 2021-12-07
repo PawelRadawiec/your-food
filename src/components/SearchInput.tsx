@@ -20,7 +20,6 @@ const SearchInput = ({
         onSearch(value);
       });
     return () => {
-      console.log('unsubscrtibe');
       subscription.unsubscribe();
     };
   }, []);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import SearchInput from '../components/Search';
+import SearchInput from '../components/SearchInput';
 
 const SearchScreen = ({ navigation }: { navigation: any }) => {
   return (
