@@ -1,4 +1,5 @@
 export enum BussinessActionTypes {
   SET_RESULTS = 'SET_RESULTS',
-  SET_LOADING = 'SET_LOADING'
+  SET_LOADING = 'SET_LOADING',
+  REQUEST_ERROR = 'REQUEST_ERROR'
 }

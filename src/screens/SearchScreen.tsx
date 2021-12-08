@@ -9,9 +9,8 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
     <View style={styles.container}>
       <SearchInput
         loading={state.loading}
-        onSearch={(value: string) => {
-          console.log('Value: ', value);
-          actions.search();
+        onSearch={(phrase: string) => {
+          actions.search(phrase);
         }}
       />
       <Button

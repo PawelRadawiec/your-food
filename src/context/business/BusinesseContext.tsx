@@ -23,9 +23,11 @@ const bussinessReducer = (
 ): BussinessState => {
   switch (action.type) {
     case BussinessActionTypes.SET_RESULTS:
-      return { ...state, results: action.payload };
+      return { ...state, results: action.payload, loading: false };
     case BussinessActionTypes.SET_LOADING:
       return { ...state, loading: action.payload };
+    case BussinessActionTypes.REQUEST_ERROR:
+      return { ...state, loading: false };
     default:
       return state;
   }
@@ -34,24 +36,32 @@ const bussinessReducer = (
 export const BusinesseProvider = ({ children }: { children: any }) => {
   const [state, dispach] = useReducer(bussinessReducer, defaulBusinesstState);
 
-  const search = async () => {
+  const requestError = (error: any) => {
+    console.error(error);
+    dispach({ type: BussinessActionTypes.REQUEST_ERROR });
+  };
+
+  const search = async (phrase: string) => {
     let response: any;
     dispach({
       type: BussinessActionTypes.SET_LOADING,
       payload: true,
     });
     try {
-      response = await YelpApi.get('/search');
+      // todo - changed location and limit
+      response = await YelpApi.get('/search', {
+        params: {
+          limit: 50,
+          term: phrase,
+          location: 'san jose',
+        },
+      });
       dispach({
         type: BussinessActionTypes.SET_RESULTS,
         payload: response.data,
       });
     } catch (error) {
-      console.error(error);
-      dispach({
-        type: BussinessActionTypes.SET_LOADING,
-        payload: false,
-      });
+      requestError(error);
     }
   };
 
