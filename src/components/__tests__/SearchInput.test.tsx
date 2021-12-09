@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Input } from 'react-native-elements';
 import renderer, { act, ReactTestInstance } from 'react-test-renderer';
-import SearchInput from '../SearchInput';
+import SearchInput from '../SearchForm';
 
 describe('search input', () => {
   let component: ReactTestInstance;
