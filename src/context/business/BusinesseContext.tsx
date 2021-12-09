@@ -1,5 +1,6 @@
 import React, { useReducer } from 'react';
 import YelpApi from '../../api/YelpApi';
+import { BussinessSearchParams } from '../../models/api/BusinessSearchParams';
 import { AppContext } from '../AppContex';
 import { BussinessAction } from './models/BussinessActionModel';
 import { BussinessActionTypes } from './models/BussinessActionTypesModel';
@@ -41,24 +42,24 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
     dispach({ type: BussinessActionTypes.REQUEST_ERROR });
   };
 
-  const search = async (phrase: string) => {
+  const search = async (params: BussinessSearchParams) => {
     let response: any;
     dispach({
       type: BussinessActionTypes.SET_LOADING,
       payload: true,
     });
     try {
-      // todo - changed location and limit
+      console.log('params: ', params);
       response = await YelpApi.get('/search', {
         params: {
-          limit: 50,
-          term: phrase,
-          location: 'san jose',
+          limit: params.limit,
+          term: params.term,
+          location: params.location,
         },
       });
       dispach({
         type: BussinessActionTypes.SET_RESULTS,
-        payload: response.data,
+        payload: response.data?.businesses,
       });
     } catch (error) {
       requestError(error);

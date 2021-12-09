@@ -1,23 +1,23 @@
 import React, { useContext } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
-import SearchInput from '../components/SearchInput';
+import { StyleSheet, View } from 'react-native';
+import BusinessList from '../components/BusinessList';
+import SearchForm from '../components/SearchForm';
 import BussinessContext from '../context/business/BusinesseContext';
 
 const SearchScreen = ({ navigation }: { navigation: any }) => {
-  const { state, actions } = useContext(BussinessContext);
+  const {
+    state: { loading, results },
+    actions,
+  } = useContext(BussinessContext);
   return (
     <View style={styles.container}>
-      <SearchInput
-        loading={state.loading}
+      <SearchForm
+        loading={loading}
         onSearch={(phrase: string) => {
           actions.search(phrase);
         }}
       />
-      <Button
-        title="Go to details"
-        onPress={() => navigation.navigate('Details')}
-      />
-      <Text>Results list</Text>
+      <BusinessList data={results} />
     </View>
   );
 };
