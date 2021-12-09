@@ -49,7 +49,6 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
       payload: true,
     });
     try {
-      console.log('params: ', params);
       response = await YelpApi.get('/search', {
         params: {
           limit: params.limit,

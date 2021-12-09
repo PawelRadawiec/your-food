@@ -11,12 +11,19 @@ const BusinessList = ({ data }: { data: BusinessesModel[] }) => {
         return (
           <View style={styles.business}>
             <Text style={styles.title}>{item.name}</Text>
-            <Text style={styles.city}>{item.location?.city}</Text>
+            <View style={styles.information}>
+              <Text style={styles.city}>{item.location?.city}</Text>
+              <Text style={styles.city}>{item.rating}</Text>
+            </View>
             <Image
               style={styles.image}
-              source={{
-                uri: item.image_url,
-              }}
+              source={
+                item.image_url
+                  ? {
+                      uri: item.image_url,
+                    }
+                  : require('../images/no_image.jpeg')
+              }
             />
           </View>
         );
@@ -36,6 +43,11 @@ const styles = StyleSheet.create({
   image: {
     width: 350,
     height: 200,
+  },
+  information: {
+    marginVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   title: {
     fontWeight: 'bold',
