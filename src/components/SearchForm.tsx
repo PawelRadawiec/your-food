@@ -1,42 +1,89 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Input } from 'react-native-elements';
 import { BallIndicator } from 'react-native-indicators';
 import { debounceTime, Subject } from 'rxjs';
 import { BussinessSearchParams } from '../models/api/BusinessSearchParams';
 
-const SearchForm = ({
-  onSearch,
-  loading,
-}: {
-  onSearch: any;
-  loading: boolean;
-}) => {
-  const [term, setTerm] = useState('');
+const SearchForm = ({ onSearch, loading }: { onSearch: any; loading: boolean }) => {
   const [location, setLocation] = useState('');
+  const [types, setTypes] = useState([
+    {
+      name: 'Pizza',
+      value: 'pizza',
+      selected: false,
+    },
+    {
+      name: 'Sushi',
+      value: 'sushi',
+      selected: false,
+    },
+    {
+      name: 'Burger',
+      value: 'burger',
+      selected: false,
+    },
+    {
+      name: 'Pasta',
+      value: 'pasta',
+      selected: false,
+    },
+    {
+      name: 'Steak',
+      value: 'steak',
+      selected: false,
+    },
+    {
+      name: 'Meat',
+      value: 'meat',
+      selected: false,
+    },
+    {
+      name: 'Beer',
+      value: 'beer',
+      selected: false,
+    },
+  ]);
   const [searchSubject] = useState(new Subject<BussinessSearchParams>());
   useEffect(() => {
-    const subscription = searchSubject
-      .pipe(debounceTime(1000))
-      .subscribe((params: BussinessSearchParams) => {
-        params.limit = 50;
-        if (params?.location && params?.term) {
-          onSearch(params);
-        }
-      });
+    const subscription = searchSubject.pipe(debounceTime(1000)).subscribe((params: BussinessSearchParams) => {
+      params.limit = 50;
+      if (params?.location && params?.term) {
+        onSearch(params);
+      }
+    });
     return () => {
       subscription.unsubscribe();
     };
   }, []);
   return (
     <View style={styles.container}>
-      <Input
-        placeholder="Search"
-        value={term}
-        disabled={loading}
-        onChangeText={(value: string) => {
-          setTerm(value);
-          searchSubject.next({ term, location });
+      <FlatList
+        showsHorizontalScrollIndicator={false}
+        style={styles.types}
+        horizontal={true}
+        keyExtractor={(item) => item.value}
+        data={types}
+        renderItem={({ item }) => {
+          return (
+            <TouchableOpacity
+              onPress={() => {
+                setTypes(
+                  types.map((type) => {
+                    return {
+                      ...type,
+                      selected: type.value === item.value,
+                    };
+                  })
+                );
+                searchSubject.next({ term: item.value, location });
+              }}
+            >
+              <View style={item.selected ? styles.typeSelected : styles.type}>
+                <Text>{item.name}</Text>
+              </View>
+            </TouchableOpacity>
+          );
         }}
       />
       <Input
@@ -45,7 +92,7 @@ const SearchForm = ({
         disabled={loading}
         onChangeText={(value: string) => {
           setLocation(value);
-          searchSubject.next({ term, location });
+          searchSubject.next({ term: types.find((type) => type.selected)?.value, location });
         }}
       />
       {loading ? <BallIndicator style={styles.spinner} size={20} /> : null}
@@ -56,11 +103,28 @@ const SearchForm = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    width: 300,
+    width: 400,
   },
   spinner: {
     marginBottom: 10,
     marginLeft: 10,
+  },
+  types: {},
+  type: {
+    borderColor: '#f4511e',
+    borderWidth: 2,
+    width: 'auto',
+    padding: 5,
+    margin: 10,
+    borderRadius: 10,
+  },
+  typeSelected: {
+    backgroundColor: '#f4511e',
+    width: 'auto',
+    padding: 7,
+    margin: 10,
+    color: 'black',
+    borderRadius: 10,
   },
 });
 
