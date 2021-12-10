@@ -1,10 +1,23 @@
-import React from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import BussinessContext from '../context/business/BusinesseContext';
 
 const DetailsScreen = () => {
+  const {
+    state: { business },
+    actions,
+  } = useContext(BussinessContext);
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        actions.setBusiness(null);
+      };
+    }, [])
+  );
   return (
     <View>
-      <Text>DetailsScreen</Text>
+      <Text>{business?.name}</Text>
     </View>
   );
 };

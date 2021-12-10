@@ -1,8 +1,23 @@
-import React from 'react';
-import { FlatList, Image, StyleSheet, Text, View } from 'react-native';
+import React, { useContext } from 'react';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import BussinessContext from '../context/business/BusinesseContext';
 import { BusinessesModel } from '../models/yelp/BusinessesModel';
 
-const BusinessList = ({ data }: { data: BusinessesModel[] }) => {
+const BusinessList = ({
+  data,
+  navigation,
+}: {
+  data: BusinessesModel[];
+  navigation: any;
+}) => {
+  const { state, actions } = useContext(BussinessContext);
   return (
     <FlatList
       showsVerticalScrollIndicator={false}
@@ -10,7 +25,13 @@ const BusinessList = ({ data }: { data: BusinessesModel[] }) => {
       renderItem={({ item }) => {
         return (
           <View style={styles.business}>
-            <Text style={styles.title}>{item.name}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                actions.getById(item.id, navigation.navigate('Details'));
+              }}
+            >
+              <Text style={styles.title}>{item.name}</Text>
+            </TouchableOpacity>
             <View style={styles.information}>
               <Text style={styles.city}>{item.location?.city}</Text>
               <Text style={styles.city}>{item.rating}</Text>
@@ -47,7 +68,7 @@ const styles = StyleSheet.create({
   information: {
     marginVertical: 10,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   title: {
     fontWeight: 'bold',

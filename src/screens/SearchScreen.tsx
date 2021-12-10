@@ -17,7 +17,7 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
           actions.search(phrase);
         }}
       />
-      <BusinessList data={results} />
+      <BusinessList data={results} navigation={navigation} />
     </View>
   );
 };
