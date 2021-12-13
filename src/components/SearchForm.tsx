@@ -43,6 +43,11 @@ const SearchForm = ({ onSearch, loading }: { onSearch: any; loading: boolean }) 
       value: 'beer',
       selected: false,
     },
+    {
+      name: 'Wine',
+      value: 'wine',
+      selected: false,
+    },
   ]);
   const [searchSubject] = useState(new Subject<BussinessSearchParams>());
   useEffect(() => {
@@ -60,7 +65,6 @@ const SearchForm = ({ onSearch, loading }: { onSearch: any; loading: boolean }) 
     <View style={styles.container}>
       <FlatList
         showsHorizontalScrollIndicator={false}
-        style={styles.types}
         horizontal={true}
         keyExtractor={(item) => item.value}
         data={types}
@@ -80,7 +84,7 @@ const SearchForm = ({ onSearch, loading }: { onSearch: any; loading: boolean }) 
               }}
             >
               <View style={item.selected ? styles.typeSelected : styles.type}>
-                <Text>{item.name}</Text>
+                <Text style={styles.name}>{item.name}</Text>
               </View>
             </TouchableOpacity>
           );
@@ -109,10 +113,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 10,
   },
-  types: {},
   type: {
     borderColor: '#f4511e',
-    borderWidth: 2,
+    borderWidth: 3,
     width: 'auto',
     padding: 5,
     margin: 10,
@@ -126,6 +129,10 @@ const styles = StyleSheet.create({
     color: 'black',
     borderRadius: 10,
   },
+  name: {
+    fontSize: 16, 
+    fontWeight: 'bold'
+  }
 });
 
 export default SearchForm;
