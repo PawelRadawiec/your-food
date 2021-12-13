@@ -1,23 +1,14 @@
 import React, { useContext } from 'react';
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { BallIndicator } from 'react-native-indicators';
 import BussinessContext from '../context/business/BusinesseContext';
 import { BusinessesModel } from '../models/yelp/BusinessesModel';
 
-const BusinessList = ({
-  data,
-  navigation,
-}: {
-  data: BusinessesModel[];
-  navigation: any;
-}) => {
-  const { state, actions } = useContext(BussinessContext);
+const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigation: any }) => {
+  const {
+    state: { selectedPending },
+    actions,
+  } = useContext(BussinessContext);
   return (
     <FlatList
       showsVerticalScrollIndicator={false}
@@ -25,13 +16,19 @@ const BusinessList = ({
       renderItem={({ item }) => {
         return (
           <View style={styles.business}>
-            <TouchableOpacity
-              onPress={() => {
-                actions.getById(item.id, navigation.navigate('Details'));
-              }}
-            >
-              <Text style={styles.title}>{item.name}</Text>
-            </TouchableOpacity>
+            {selectedPending.id === item.id && selectedPending.pending ? (
+              <BallIndicator size={20} />
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  if (!selectedPending.pending) {
+                    actions.getById(item.id, navigation);
+                  }
+                }}
+              >
+                <Text style={styles.title}>{item.name}</Text>
+              </TouchableOpacity>
+            )}
             <View style={styles.information}>
               <Text style={styles.city}>{item.location?.city}</Text>
               <Text style={styles.city}>{item.rating}</Text>

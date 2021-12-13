@@ -6,4 +6,5 @@ export interface Location {
   address3: string;
   state: string;
   zip_code: string;
+  display_address: string[];
 }

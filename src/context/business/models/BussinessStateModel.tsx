@@ -5,12 +5,12 @@ export interface BussinessState {
   results: BusinessesModel[];
   loading: boolean;
   business: BusinessDetails | null;
-  selectedPending: boolean;
+  selectedPending: { pending: boolean; id: string };
 }
 
 export const defaulBusinesstState: BussinessState = {
   results: [],
   loading: false,
   business: null,
-  selectedPending: false,
+  selectedPending: { pending: false, id: '' },
 };

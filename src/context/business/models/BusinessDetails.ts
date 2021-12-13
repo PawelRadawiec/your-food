@@ -15,11 +15,24 @@ export interface BusinessDetails {
   review_count: string;
   categories: Category[];
   rating: string;
-  location: Location[];
+  location: Location;
   coordinates: Coordinates;
   photos: string[];
   price: string;
-  hours: [];
+  hours: BusinessHour[];
   transactions: [];
   special_hours: [];
+}
+
+export interface BusinessHour {
+  hours_type: string;
+  is_open_now: boolean;
+  open: BusinessDayDetails[];
+}
+
+export interface BusinessDayDetails {
+  day: number;
+  end: 'string';
+  is_overnight: boolean;
+  start: string;
 }

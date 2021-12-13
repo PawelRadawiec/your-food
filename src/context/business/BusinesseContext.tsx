@@ -1,7 +1,6 @@
 import React, { useReducer } from 'react';
 import YelpApi from '../../api/YelpApi';
 import { BussinessSearchParams } from '../../models/api/BusinessSearchParams';
-import { BusinessesModel } from '../../models/yelp/BusinessesModel';
 import { AppContext } from '../AppContex';
 import { BusinessDetails } from './models/BusinessDetails';
 import { BussinessAction } from './models/BussinessActionModel';
@@ -13,7 +12,7 @@ const businessContext: AppContext<BussinessState> = {
   actions: {
     search: () => {},
     getById: () => {},
-    setBusiness: () => {}
+    setBusiness: () => {},
   },
 };
 
@@ -26,9 +25,9 @@ const bussinessReducer = (state: BussinessState, action: BussinessAction): Bussi
     case BussinessActionTypes.SET_LOADING:
       return { ...state, loading: action.payload };
     case BussinessActionTypes.REQUEST_ERROR:
-      return { ...state, loading: false };
+      return { ...state, loading: false, selectedPending: { id: '', pending: false } };
     case BussinessActionTypes.SET_BUSINESS:
-      return { ...state, business: action.payload, selectedPending: false };
+      return { ...state, business: action.payload, selectedPending: { pending: false, id: '' } };
     case BussinessActionTypes.SELECTED_PENDING:
       return { ...state, selectedPending: action.payload };
     default:
@@ -72,13 +71,15 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
     }
   };
 
-  const getById = async (id: string, afterResponse: () => any) => {
+  const getById = async (id: string, navigation?: any) => {
     let response: any;
-    dispach({ type: BussinessActionTypes.SELECTED_PENDING, payload: true });
+    dispach({ type: BussinessActionTypes.SELECTED_PENDING, payload: { id, pending: true } });
     try {
       response = await YelpApi.get(`/${id}`);
       setBusiness(response.data);
-      afterResponse;
+      if (navigation) {
+        navigation.navigate('Details');
+      }
     } catch (error) {
       requestError(error);
       throw error;
@@ -92,7 +93,7 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
         actions: {
           search,
           getById,
-          setBusiness
+          setBusiness,
         },
       }}
     >
