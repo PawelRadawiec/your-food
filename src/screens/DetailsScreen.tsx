@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, Linking, TouchableOpacity } from 'react-native';
 import BussinessContext from '../context/business/BusinesseContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -35,10 +35,19 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
     }, [])
   );
   return (
-    <View>
+    <View style={styles.cotainer}>
       <View style={styles.detailsContainer}>
         <View style={styles.detailsTitle}>
-          <Text style={styles.title}>Visit page</Text>
+          <FontAwesome5 name="arrow-alt-circle-right" size={24} color="black" />
+          <TouchableOpacity
+            onPress={() => {
+              if (business?.url) {
+                Linking.openURL(business.url);
+              }
+            }}
+          >
+            <Text style={styles.title}>Visit page</Text>
+          </TouchableOpacity>
         </View>
         <View style={styles.detailsTitle}>
           <MaterialIcons name="phone" size={24} color="black" />
@@ -67,40 +76,48 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
           renderItem={({ item }) => {
             return (
               <View style={styles.dayBox}>
-                <Text>{days.get(item.day)}</Text>
+                <Text style={styles.dayBoxContent}>{days.get(item.day)}</Text>
               </View>
             );
           }}
         />
       </View>
-      <FlatList
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        data={business?.photos}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => {
-          return (
-            <Image
-              style={styles.image}
-              source={
-                item
-                  ? {
-                      uri: item,
-                    }
-                  : require('../images/no_image.jpeg')
-              }
-            />
-          );
-        }}
-      />
+      <View>
+        <FlatList
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={business?.photos}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => {
+            return (
+              <Image
+                style={styles.image}
+                source={
+                  item
+                    ? {
+                        uri: item,
+                      }
+                    : require('../images/no_image.jpeg')
+                }
+              />
+            );
+          }}
+        />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  cotainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+  },
   detailsContainer: {
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    marginLeft: 10,
   },
   detailsTitle: {
     flexDirection: 'row',
@@ -112,20 +129,24 @@ const styles = StyleSheet.create({
   },
   dayBox: {
     borderColor: '#f4511e',
-    borderWidth: 2,
+    borderWidth: 3,
     width: 'auto',
-    padding: 5,
+    padding: 10,
     margin: 10,
     borderRadius: 10,
   },
+  dayBoxContent: {
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
   image: {
-    width: 300,
-    height: 200,
+    width: 350,
+    height: 350,
     margin: 10,
   },
   title: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 14,
     margin: 10,
   },
 });

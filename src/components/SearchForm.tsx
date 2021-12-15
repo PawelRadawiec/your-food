@@ -51,7 +51,7 @@ const SearchForm = ({ onSearch, loading }: { onSearch: any; loading: boolean }) 
   ]);
   const [searchSubject] = useState(new Subject<BussinessSearchParams>());
   useEffect(() => {
-    const subscription = searchSubject.pipe(debounceTime(1000)).subscribe((params: BussinessSearchParams) => {
+    const subscription = searchSubject.pipe(debounceTime(500)).subscribe((params: BussinessSearchParams) => {
       params.limit = 50;
       if (params?.location && params?.term) {
         onSearch(params);
