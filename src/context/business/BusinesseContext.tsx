@@ -3,6 +3,7 @@ import YelpApi from '../../api/YelpApi';
 import { BussinessSearchParams } from '../../models/api/BusinessSearchParams';
 import { AppContext } from '../AppContex';
 import { BusinessDetails } from './models/BusinessDetails';
+import { BusinessReview } from './models/BusinessReview';
 import { BussinessAction } from './models/BussinessActionModel';
 import { BussinessActionTypes } from './models/BussinessActionTypesModel';
 import { BussinessState, defaulBusinesstState } from './models/BussinessStateModel';
@@ -24,6 +25,8 @@ const bussinessReducer = (state: BussinessState, action: BussinessAction): Bussi
       return { ...state, results: action.payload, loading: false };
     case BussinessActionTypes.SET_LOADING:
       return { ...state, loading: action.payload };
+    case BussinessActionTypes.SET_REVIEWS:
+      return { ...state, reviews: action.payload };
     case BussinessActionTypes.REQUEST_ERROR:
       return { ...state, loading: false, selectedPending: { id: '', pending: false } };
     case BussinessActionTypes.SET_BUSINESS:
@@ -86,6 +89,21 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
     }
   };
 
+  const getReviews = async (businessId: string) => {
+    let reviews: BusinessReview[];
+    dispach({ type: BussinessActionTypes.SET_LOADING, payload: true });
+    try {
+      const response = await YelpApi.get(`/${businessId}/reviews`);
+      reviews = response.data;
+      console.log();
+      dispach({ type: BussinessActionTypes.SET_REVIEWS, payload: reviews });
+      dispach({ type: BussinessActionTypes.SET_LOADING, payload: false });
+    } catch (error) {
+      requestError(error);
+      throw error;
+    }
+  };
+
   return (
     <BussinessContext.Provider
       value={{
@@ -94,6 +112,7 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
           search,
           getById,
           setBusiness,
+          getReviews
         },
       }}
     >

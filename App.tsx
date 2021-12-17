@@ -4,6 +4,7 @@ import React from 'react';
 import { BusinesseProvider } from './src/context/business/BusinesseContext';
 import DetailsScreen from './src/screens/DetailsScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import ReviewsScreen from './src/screens/ReviewsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ const App = () => {
           }}
         ></Stack.Screen>
         <Stack.Screen name="Details" component={DetailsScreen}></Stack.Screen>
+        <Stack.Screen name="Reviews" component={ReviewsScreen}></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );

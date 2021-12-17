@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Image, FlatList, Linking, TouchableOpacity } fr
 import BussinessContext from '../context/business/BusinesseContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
+import { Button, ButtonGroup } from 'react-native-elements';
 
 const DetailsScreen = ({ navigation }: { navigation: any }) => {
   const [displayAddress, setDisplayAddress] = useState<string>('');
@@ -66,6 +67,22 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
           <MaterialIcons name="location-on" size={24} color="black" />
           <Text style={styles.title}>{displayAddress}</Text>
         </View>
+      </View>
+      <View>
+        <Button
+          type="outline"
+          buttonStyle={{
+            borderColor: 'f4511e',
+          }}
+          icon={{
+            name: 'arrow-right',
+            size: 15,
+          }}
+          title="Reviews"
+          onPress={() => {
+            navigation.navigate('Reviews');
+          }}
+        />
       </View>
       <View style={styles.days}>
         <FlatList
@@ -148,6 +165,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
     margin: 10,
+  },
+  reviewsButton: {
+    width: 200,
+    alignSelf: 'center',
   },
 });
 
