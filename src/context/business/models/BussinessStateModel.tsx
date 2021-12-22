@@ -8,6 +8,7 @@ export interface BussinessState {
   loading: boolean;
   business: BusinessDetails | null;
   selectedPending: { pending: boolean; id: string };
+  reviewsPending: boolean;
 }
 
 export const defaulBusinesstState: BussinessState = {
@@ -16,4 +17,5 @@ export const defaulBusinesstState: BussinessState = {
   loading: false,
   business: null,
   selectedPending: { pending: false, id: '' },
+  reviewsPending: false
 };

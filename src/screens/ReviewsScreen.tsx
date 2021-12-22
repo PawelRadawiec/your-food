@@ -1,24 +1,40 @@
 import React, { useContext, useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { BallIndicator } from 'react-native-indicators';
 import BussinessContext from '../context/business/BusinesseContext';
+import ReviewsList from '../components/ReviewsList';
 
-const ReviewsScreen = () => {
+const ReviewsScreen = ({ navigation }: { navigation: any }) => {
   const {
-    state: { reviews, loading, business },
-    actions: { getReviews },
+    state: { reviews, reviewsPending, business },
+    actions: { getReviews, clearReviews },
   } = useContext(BussinessContext);
   useEffect(() => {
     getReviews(business?.id);
+    navigation.setOptions({ title: business?.name ? `Reviews - ${business.name}` : '...' });
+    return () => {
+      clearReviews();
+    };
   }, []);
   return (
-    <View>
-      {loading ? <BallIndicator  size={20}/> : <Text>{reviews.length}</Text>}
-      <Text>ReviewsScreen</Text>
+    <View style={styles.container}>
+      {reviewsPending ? (
+        <BallIndicator size={50} />
+      ) : (
+        <View>
+          <ReviewsList reviews={reviews} />
+        </View>
+      )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    alignContent: 'center',
+  },
+});
 
 export default ReviewsScreen;

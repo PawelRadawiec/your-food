@@ -33,6 +33,8 @@ const bussinessReducer = (state: BussinessState, action: BussinessAction): Bussi
       return { ...state, business: action.payload, selectedPending: { pending: false, id: '' } };
     case BussinessActionTypes.SELECTED_PENDING:
       return { ...state, selectedPending: action.payload };
+    case BussinessActionTypes.SET_REVIEWS_PENDING:
+      return { ...state, reviewsPending: action.payload };
     default:
       return state;
   }
@@ -91,17 +93,20 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
 
   const getReviews = async (businessId: string) => {
     let reviews: BusinessReview[];
-    dispach({ type: BussinessActionTypes.SET_LOADING, payload: true });
+    dispach({ type: BussinessActionTypes.SET_REVIEWS_PENDING, payload: true });
     try {
       const response = await YelpApi.get(`/${businessId}/reviews`);
-      reviews = response.data;
-      console.log();
+      reviews = response.data.reviews;
       dispach({ type: BussinessActionTypes.SET_REVIEWS, payload: reviews });
-      dispach({ type: BussinessActionTypes.SET_LOADING, payload: false });
+      dispach({ type: BussinessActionTypes.SET_REVIEWS_PENDING, payload: false });
     } catch (error) {
       requestError(error);
       throw error;
     }
+  };
+
+  const clearReviews = () => {
+    dispach({ type: BussinessActionTypes.SET_REVIEWS, payload: [] });
   };
 
   return (
@@ -112,7 +117,8 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
           search,
           getById,
           setBusiness,
-          getReviews
+          getReviews,
+          clearReviews
         },
       }}
     >

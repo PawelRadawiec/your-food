@@ -1,10 +1,9 @@
-import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, FlatList, Linking, TouchableOpacity } from 'react-native';
 import BussinessContext from '../context/business/BusinesseContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { Button, ButtonGroup } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 
 const DetailsScreen = ({ navigation }: { navigation: any }) => {
   const [displayAddress, setDisplayAddress] = useState<string>('');
@@ -13,6 +12,7 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
     state: { business },
     actions,
   } = useContext(BussinessContext);
+
   useEffect(() => {
     navigation.setOptions({ title: business?.name ? business.name : '...' });
     const joinAddreses = business?.location?.display_address?.join(', ');
@@ -28,13 +28,7 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
     });
     setDays(daysMap);
   }, [business]);
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        actions.setBusiness(null);
-      };
-    }, [])
-  );
+
   return (
     <View style={styles.cotainer}>
       <View style={styles.detailsContainer}>
@@ -72,7 +66,8 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
         <Button
           type="outline"
           buttonStyle={{
-            borderColor: 'f4511e',
+            borderColor: '#f4511e',
+            borderWidth: 2,
           }}
           icon={{
             name: 'arrow-right',
@@ -89,7 +84,7 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           data={business?.hours?.[0]?.open}
-          keyExtractor={(item) => item.day}
+          keyExtractor={(item) => `id${item.day}`}
           renderItem={({ item }) => {
             return (
               <View style={styles.dayBox}>
