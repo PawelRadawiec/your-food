@@ -19,11 +19,7 @@ const StarsList = ({ rating }: { rating: number }) => {
       data={stars}
       keyExtractor={(item) => `id${item}`}
       renderItem={({ index }) => {
-        return isDecimal && index === stars.length - 1 ? (
-          <MaterialIcons name="star-half" size={24} color="black" />
-        ) : (
-          <MaterialIcons name="star" size={24} color="black" />
-        );
+        return <MaterialIcons name={isDecimal && index === stars.length - 1 ? 'star-half' : 'star'} size={24} color="black" />;
       }}
     />
   );
