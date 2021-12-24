@@ -4,6 +4,7 @@ import BussinessContext from '../context/business/BusinesseContext';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Button } from 'react-native-elements';
+import StarsList from '../components/StarsList';
 
 const DetailsScreen = ({ navigation }: { navigation: any }) => {
   const [displayAddress, setDisplayAddress] = useState<string>('');
@@ -52,11 +53,7 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
           <FontAwesome5 name="door-open" size={24} color="black" />
           <Text style={styles.title}> {business?.is_closed ? 'No' : 'Yes'}</Text>
         </View>
-        <View style={styles.detailsTitle}>
-          <MaterialIcons name="star-rate" size={24} color="black" />
-          <Text style={styles.title}>{business?.rating}</Text>
-          <Text style={styles.title}>Reviews: {business?.review_count}</Text>
-        </View>
+        <StarsList rating={Number(business?.rating)} />
         <View style={styles.detailsTitle}>
           <MaterialIcons name="location-on" size={24} color="black" />
           <Text style={styles.title}>{displayAddress}</Text>
@@ -123,12 +120,8 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
 const styles = StyleSheet.create({
   cotainer: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-around',
   },
   detailsContainer: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
     marginLeft: 10,
   },
   detailsTitle: {
@@ -161,10 +154,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     margin: 10,
   },
-  reviewsButton: {
-    width: 200,
-    alignSelf: 'center',
-  },
+  reviewsInfo: {},
 });
 
 export default DetailsScreen;

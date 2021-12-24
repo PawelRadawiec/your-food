@@ -1,16 +1,9 @@
 import React from 'react';
 import { StyleSheet, FlatList, View, Image, Text } from 'react-native';
 import { BusinessReview } from '../context/business/models/BusinessReview';
-import { MaterialIcons } from '@expo/vector-icons';
+import StarsList from './StarsList';
 
 const ReviewsList = ({ reviews }: { reviews: BusinessReview[] }) => {
-  const ratings = (size: number): number[] => {
-    const stars = [];
-    for (let i = 0; i < size; i++) {
-      stars.push(i);
-    }
-    return stars;
-  };
   return (
     <FlatList
       data={reviews}
@@ -33,14 +26,7 @@ const ReviewsList = ({ reviews }: { reviews: BusinessReview[] }) => {
 
             <View style={styles.reviewInfo}>
               <Text style={styles.name}>{item.user?.name}</Text>
-              <FlatList
-                style={styles.stars}
-                data={ratings(item.rating)}
-                keyExtractor={(item) => `id${item}`}
-                renderItem={() => {
-                  return <MaterialIcons name="star" size={24} color="black" />;
-                }}
-              />
+              <StarsList rating={item.rating} />
               <Text style={styles.reviewText}>{item.text}</Text>
               <Text>{item.time_created}</Text>
             </View>
@@ -79,9 +65,6 @@ const styles = StyleSheet.create({
   },
   reviewText: {
     fontSize: 16,
-  },
-  stars: {
-    flexDirection: 'row',
   },
 });
 
