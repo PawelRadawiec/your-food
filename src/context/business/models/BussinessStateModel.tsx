@@ -1,3 +1,4 @@
+import { BussinessSearchParams } from '../../../models/api/BusinessSearchParams';
 import { BusinessesModel } from '../../../models/yelp/BusinessesModel';
 import { BusinessDetails } from './BusinessDetails';
 import { BusinessReview } from './BusinessReview';
@@ -9,6 +10,7 @@ export interface BussinessState {
   business: BusinessDetails | null;
   selectedPending: { pending: boolean; id: string };
   reviewsPending: boolean;
+  params: BussinessSearchParams | null
 }
 
 export const defaulBusinesstState: BussinessState = {
@@ -17,5 +19,6 @@ export const defaulBusinesstState: BussinessState = {
   loading: false,
   business: null,
   selectedPending: { pending: false, id: '' },
-  reviewsPending: false
+  reviewsPending: false,
+  params: null
 };

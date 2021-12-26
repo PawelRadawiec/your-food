@@ -52,7 +52,6 @@ const SearchForm = ({ onSearch, loading }: { onSearch: any; loading: boolean }) 
   const [searchSubject] = useState(new Subject<BussinessSearchParams>());
   useEffect(() => {
     const subscription = searchSubject.pipe(debounceTime(500)).subscribe((params: BussinessSearchParams) => {
-      params.limit = 50;
       if (params?.location && params?.term) {
         onSearch(params);
       }
@@ -130,9 +129,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   name: {
-    fontSize: 16, 
-    fontWeight: 'bold'
-  }
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default SearchForm;

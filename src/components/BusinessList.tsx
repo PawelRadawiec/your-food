@@ -1,17 +1,24 @@
 import React, { useContext } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BallIndicator } from 'react-native-indicators';
+import { of } from 'rxjs';
 import BussinessContext from '../context/business/BusinesseContext';
 import { BusinessesModel } from '../models/yelp/BusinessesModel';
+import StarsList from './StarsList';
 
 const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigation: any }) => {
   const {
-    state: { selectedPending },
+    state: { selectedPending, params, loading },
     actions,
   } = useContext(BussinessContext);
   return (
     <FlatList
       showsVerticalScrollIndicator={false}
+      onEndReached={() => {
+        if (!loading) {
+          actions.search(params);
+        }
+      }}
       data={data}
       renderItem={({ item }) => {
         return (
@@ -30,8 +37,15 @@ const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigatio
               </TouchableOpacity>
             )}
             <View style={styles.information}>
-              <Text style={styles.city}>{item.location?.city}</Text>
-              <Text style={styles.city}>{item.rating}</Text>
+              <View>
+                <Text style={styles.city}>{item.location?.city}</Text>
+              </View>
+              <View>
+                <Text style={styles.city}>Reviews {item.review_count}</Text>
+              </View>
+              <View>
+                <StarsList rating={Number(item.rating)} />
+              </View>
             </View>
             <Image
               style={styles.image}
@@ -52,9 +66,6 @@ const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigatio
 };
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-  },
   business: {
     marginVertical: 10,
   },
@@ -63,8 +74,9 @@ const styles = StyleSheet.create({
     height: 200,
   },
   information: {
-    marginVertical: 10,
+    marginVertical: 5,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   title: {

@@ -1,4 +1,5 @@
 import React, { useReducer } from 'react';
+import { Action } from 'rxjs/internal/scheduler/Action';
 import YelpApi from '../../api/YelpApi';
 import { BussinessSearchParams } from '../../models/api/BusinessSearchParams';
 import { AppContext } from '../AppContex';
@@ -35,6 +36,8 @@ const bussinessReducer = (state: BussinessState, action: BussinessAction): Bussi
       return { ...state, selectedPending: action.payload };
     case BussinessActionTypes.SET_REVIEWS_PENDING:
       return { ...state, reviewsPending: action.payload };
+    case BussinessActionTypes.SET_PARAMS:
+      return { ...state, params: action.payload };
     default:
       return state;
   }
@@ -52,12 +55,18 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
     dispach({ type: BussinessActionTypes.REQUEST_ERROR });
   };
 
-  const search = async (params: BussinessSearchParams) => {
+  const search = async (params: BussinessSearchParams, increaseLimit?: boolean) => {
+    if (!params) {
+      return;
+    }
     let response: any;
     dispach({
       type: BussinessActionTypes.SET_LOADING,
       payload: true,
     });
+    if (increaseLimit) {
+      params.limit = params.limit ? (params.limit += 10) : 10;
+    }
     try {
       response = await YelpApi.get('/search', {
         params: {
@@ -69,6 +78,10 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
       dispach({
         type: BussinessActionTypes.SET_RESULTS,
         payload: response.data?.businesses,
+      });
+      dispach({
+        type: BussinessActionTypes.SET_PARAMS,
+        payload: params,
       });
     } catch (error) {
       requestError(error);
@@ -118,7 +131,7 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
           getById,
           setBusiness,
           getReviews,
-          clearReviews
+          clearReviews,
         },
       }}
     >
