@@ -5,7 +5,8 @@ import { BallIndicator } from 'react-native-indicators';
 import { debounceTime, Subject } from 'rxjs';
 import { BussinessSearchParams } from '../models/api/BusinessSearchParams';
 
-const SearchForm = ({ onSearch, loading }: { onSearch: any; loading: boolean }) => {
+const SearchForm = ({ onSearch, onUnselected, loading }: { onSearch: any; onUnselected: any; loading: boolean }) => {
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [location, setLocation] = useState('');
   const [types, setTypes] = useState([
     {
@@ -71,15 +72,20 @@ const SearchForm = ({ onSearch, loading }: { onSearch: any; loading: boolean }) 
           return (
             <TouchableOpacity
               onPress={() => {
-                setTypes(
-                  types.map((type) => {
-                    return {
-                      ...type,
-                      selected: type.value === item.value,
-                    };
-                  })
-                );
-                searchSubject.next({ term: item.value, location });
+                if (loading) {
+                  return;
+                }
+                const typesCopy = [...types];
+                const selectedIndex = typesCopy.findIndex((type) => type.value === item.value);
+                typesCopy[selectedIndex] = { ...item, selected: !item.selected };
+                setTypes(typesCopy);
+                setSelectedIndex(selectedIndex);
+                if (typesCopy[selectedIndex].selected) {
+                  searchSubject.next({ term: item.value, location });
+                } else {
+                  setSelectedIndex(-1);
+                  onUnselected(item.value);
+                }
               }}
             >
               <View style={item.selected ? styles.typeSelected : styles.type}>
@@ -95,7 +101,7 @@ const SearchForm = ({ onSearch, loading }: { onSearch: any; loading: boolean }) 
         disabled={loading}
         onChangeText={(value: string) => {
           setLocation(value);
-          searchSubject.next({ term: types.find((type) => type.selected)?.value, location });
+          searchSubject.next({ term: types[selectedIndex]?.value, location });
         }}
       />
       {loading ? <BallIndicator style={styles.spinner} size={20} /> : null}

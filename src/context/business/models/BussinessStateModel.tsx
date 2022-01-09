@@ -10,7 +10,8 @@ export interface BussinessState {
   business: BusinessDetails | null;
   selectedPending: { pending: boolean; id: string };
   reviewsPending: boolean;
-  params: BussinessSearchParams | null
+  params: BussinessSearchParams | null;
+  resultsMap: Map<string, BusinessesModel[]>;
 }
 
 export const defaulBusinesstState: BussinessState = {
@@ -20,5 +21,6 @@ export const defaulBusinesstState: BussinessState = {
   business: null,
   selectedPending: { pending: false, id: '' },
   reviewsPending: false,
-  params: null
+  params: null,
+  resultsMap: new Map()
 };

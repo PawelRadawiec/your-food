@@ -16,6 +16,9 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
         onSearch={(phrase: string) => {
           actions.search(phrase);
         }}
+        onUnselected={(type: string) => {
+            actions.deleteResultByType(type);
+        }}
       />
       <BusinessList data={results} navigation={navigation} />
     </View>

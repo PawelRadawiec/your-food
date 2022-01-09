@@ -1,5 +1,4 @@
 import React, { useReducer } from 'react';
-import { Action } from 'rxjs/internal/scheduler/Action';
 import YelpApi from '../../api/YelpApi';
 import { BussinessSearchParams } from '../../models/api/BusinessSearchParams';
 import { AppContext } from '../AppContex';
@@ -8,6 +7,7 @@ import { BusinessReview } from './models/BusinessReview';
 import { BussinessAction } from './models/BussinessActionModel';
 import { BussinessActionTypes } from './models/BussinessActionTypesModel';
 import { BussinessState, defaulBusinesstState } from './models/BussinessStateModel';
+import _cloneDeep from 'lodash/cloneDeep';
 
 const businessContext: AppContext<BussinessState> = {
   state: defaulBusinesstState,
@@ -23,9 +23,14 @@ const BussinessContext = React.createContext(businessContext);
 const bussinessReducer = (state: BussinessState, action: BussinessAction): BussinessState => {
   switch (action.type) {
     case BussinessActionTypes.SET_RESULTS:
-      return { ...state, results: action.payload, loading: false };
+      const type = state?.params?.term;
+      const resultsClone = _cloneDeep(state.resultsMap);
+      resultsClone.set(type, action.payload);
+      return { ...state, results: action.payload, loading: false, resultsMap: resultsClone };
     case BussinessActionTypes.SET_LOADING:
       return { ...state, loading: action.payload };
+    case BussinessActionTypes.SET_RESULTS_MAP:
+      return { ...state, resultsMap: action.payload };
     case BussinessActionTypes.SET_REVIEWS:
       return { ...state, reviews: action.payload };
     case BussinessActionTypes.REQUEST_ERROR:
@@ -48,6 +53,12 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
 
   const setBusiness = (business: BusinessDetails) => {
     dispach({ type: BussinessActionTypes.SET_BUSINESS, payload: business });
+  };
+
+  const deleteResultByType = (type: string) => {
+    const resultsMapCopy = _cloneDeep(state.resultsMap);
+    resultsMapCopy.delete(type);
+    dispach({ type: BussinessActionTypes.SET_RESULTS_MAP, payload: resultsMapCopy });
   };
 
   const requestError = (error: any) => {
@@ -76,12 +87,12 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
         },
       });
       dispach({
-        type: BussinessActionTypes.SET_RESULTS,
-        payload: response.data?.businesses,
-      });
-      dispach({
         type: BussinessActionTypes.SET_PARAMS,
         payload: params,
+      });
+      dispach({
+        type: BussinessActionTypes.SET_RESULTS,
+        payload: response.data?.businesses,
       });
     } catch (error) {
       requestError(error);
@@ -132,6 +143,7 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
           setBusiness,
           getReviews,
           clearReviews,
+          deleteResultByType,
         },
       }}
     >
