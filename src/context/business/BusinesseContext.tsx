@@ -67,37 +67,30 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
   };
 
   const search = async (params: BussinessSearchParams, increaseLimit?: boolean) => {
-    if (!params) {
-      return;
-    }
-    let response: any;
     dispach({
       type: BussinessActionTypes.SET_LOADING,
       payload: true,
     });
-    if (increaseLimit) {
-      params.limit = params.limit ? (params.limit += 10) : 10;
-    }
-    try {
-      response = await YelpApi.get('/search', {
-        params: {
-          limit: params.limit,
-          term: params.term,
-          location: params.location,
-        },
+    return YelpApi.get('/search', {
+      params: {
+        limit: params.limit,
+        term: params.term,
+        location: params.location,
+      },
+    })
+      .then((response) => {
+        dispach({
+          type: BussinessActionTypes.SET_PARAMS,
+          payload: params,
+        });
+        dispach({
+          type: BussinessActionTypes.SET_RESULTS,
+          payload: response.data?.businesses,
+        });
+      })
+      .catch((error) => {
+        requestError(error);
       });
-      dispach({
-        type: BussinessActionTypes.SET_PARAMS,
-        payload: params,
-      });
-      dispach({
-        type: BussinessActionTypes.SET_RESULTS,
-        payload: response.data?.businesses,
-      });
-    } catch (error) {
-      requestError(error);
-      throw error;
-    }
   };
 
   const getById = async (id: string, navigation?: any) => {

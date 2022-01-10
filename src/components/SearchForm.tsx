@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FlatList, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Input } from 'react-native-elements';
 import { BallIndicator } from 'react-native-indicators';
-import { debounceTime, Subject } from 'rxjs';
-import { BussinessSearchParams } from '../models/api/BusinessSearchParams';
+import { SearchType } from '../context/business/models/SearchType';
 
-const SearchForm = ({ onSearch, onUnselected, loading }: { onSearch: any; onUnselected: any; loading: boolean }) => {
+const SearchForm = ({
+  onSelect,
+  onUnselected,
+  onLocationEndEditing,
+  loading,
+}: {
+  onSelect: any;
+  onUnselected: any;
+  onLocationEndEditing: any;
+  loading: boolean;
+}) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [location, setLocation] = useState('');
-  const [types, setTypes] = useState([
+  const [types, setTypes] = useState<SearchType[]>([
     {
       name: 'Pizza',
       value: 'pizza',
@@ -50,17 +59,27 @@ const SearchForm = ({ onSearch, onUnselected, loading }: { onSearch: any; onUnse
       selected: false,
     },
   ]);
-  const [searchSubject] = useState(new Subject<BussinessSearchParams>());
-  useEffect(() => {
-    const subscription = searchSubject.pipe(debounceTime(500)).subscribe((params: BussinessSearchParams) => {
-      if (params?.location && params?.term) {
-        onSearch(params);
-      }
-    });
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+
+  const typeOnPress = (item: SearchType) => {
+    const typesCopy = [...types];
+    const selectedIndex = typesCopy.findIndex((type) => type.value === item.value);
+    typesCopy[selectedIndex] = { ...item, selected: !item.selected };
+    setTypes(typesCopy);
+    const selected = typesCopy[selectedIndex].selected;
+    setSelectedIndex(selected ? selectedIndex : -1);
+    if (selected) {
+      onSelect({ term: item.value, location });
+    } else {
+      onUnselected(item.value);
+    }
+  };
+
+  const locationEndEditing = (location: string) => {
+    setLocation(location);
+    onLocationEndEditing(location);
+    // searchSubject.next({ term: types[selectedIndex]?.value, location });
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -72,20 +91,7 @@ const SearchForm = ({ onSearch, onUnselected, loading }: { onSearch: any; onUnse
           return (
             <TouchableOpacity
               onPress={() => {
-                if (loading) {
-                  return;
-                }
-                const typesCopy = [...types];
-                const selectedIndex = typesCopy.findIndex((type) => type.value === item.value);
-                typesCopy[selectedIndex] = { ...item, selected: !item.selected };
-                setTypes(typesCopy);
-                setSelectedIndex(selectedIndex);
-                if (typesCopy[selectedIndex].selected) {
-                  searchSubject.next({ term: item.value, location });
-                } else {
-                  setSelectedIndex(-1);
-                  onUnselected(item.value);
-                }
+                typeOnPress(item);
               }}
             >
               <View style={item.selected ? styles.typeSelected : styles.type}>
@@ -99,9 +105,12 @@ const SearchForm = ({ onSearch, onUnselected, loading }: { onSearch: any; onUnse
         placeholder="Location"
         value={location}
         disabled={loading}
+        leftIcon={{ type: 'font-awesome', name: 'search' }}
         onChangeText={(value: string) => {
           setLocation(value);
-          searchSubject.next({ term: types[selectedIndex]?.value, location });
+        }}
+        onEndEditing={() => {
+          locationEndEditing(location);
         }}
       />
       {loading ? <BallIndicator style={styles.spinner} size={20} /> : null}
