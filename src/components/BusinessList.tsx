@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BallIndicator } from 'react-native-indicators';
-import { of } from 'rxjs';
 import BussinessContext from '../context/business/BusinesseContext';
 import { BusinessesModel } from '../models/yelp/BusinessesModel';
-import StarsList from './StarsList';
 
 const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigation: any }) => {
   const {
@@ -17,6 +15,7 @@ const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigatio
   }, [resultsMap]);
   return (
     <FlatList
+      contentContainerStyle={{ paddingBottom: 70 }}
       data={resultKeys}
       keyExtractor={(item) => item}
       renderItem={({ item }) => {
@@ -62,15 +61,15 @@ const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigatio
                       </View>
                     </View>
                     <Image
-                        style={styles.image}
-                        source={
-                          item.image_url
-                            ? {
-                                uri: item.image_url,
-                              }
-                            : require('../images/no_image.jpeg')
-                        }
-                      />
+                      style={styles.image}
+                      source={
+                        item.image_url
+                          ? {
+                              uri: item.image_url,
+                            }
+                          : require('../images/no_image.jpeg')
+                      }
+                    />
                   </View>
                 );
               }}
@@ -106,8 +105,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     textTransform: 'capitalize',
-    marginLeft: 10
-  }
+    marginLeft: 10,
+  },
 });
 
 export default BusinessList;

@@ -15,7 +15,6 @@ const SearchForm = ({
   onLocationEndEditing: any;
   loading: boolean;
 }) => {
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [location, setLocation] = useState('');
   const [types, setTypes] = useState<SearchType[]>([
     {
@@ -66,7 +65,6 @@ const SearchForm = ({
     typesCopy[selectedIndex] = { ...item, selected: !item.selected };
     setTypes(typesCopy);
     const selected = typesCopy[selectedIndex].selected;
-    setSelectedIndex(selected ? selectedIndex : -1);
     if (selected) {
       onSelect({ term: item.value, location });
     } else {
@@ -76,8 +74,7 @@ const SearchForm = ({
 
   const locationEndEditing = (location: string) => {
     setLocation(location);
-    onLocationEndEditing(location);
-    // searchSubject.next({ term: types[selectedIndex]?.value, location });
+    onLocationEndEditing(location, types);
   };
 
   return (

@@ -4,6 +4,7 @@ import { Subject, concatMap } from 'rxjs';
 import BusinessList from '../components/BusinessList';
 import SearchForm from '../components/SearchForm';
 import BussinessContext from '../context/business/BusinesseContext';
+import { SearchType } from '../context/business/models/SearchType';
 import { BussinessSearchParams } from '../models/api/BusinessSearchParams';
 
 const SearchScreen = ({ navigation }: { navigation: any }) => {
@@ -14,28 +15,33 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
   const [searchSubject] = useState(new Subject<BussinessSearchParams>());
   useEffect(() => {
     const subscription = searchSubject
-    .pipe(
-      concatMap((params: BussinessSearchParams) => {
-        return actions.search(params);
-      })
-    )
-    .subscribe();
-  return () => {
-    subscription.unsubscribe();
-  };
-  }, [])
+      .pipe(
+        concatMap((params: BussinessSearchParams) => {
+          return actions.search(params);
+        })
+      )
+      .subscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
   return (
     <View style={styles.container}>
       <SearchForm
         loading={loading}
         onSelect={(params: BussinessSearchParams) => {
-          searchSubject.next(params)
+          searchSubject.next(params);
         }}
         onUnselected={(type: string) => {
           actions.deleteResultByType(type);
         }}
-        onLocationEndEditing={(location: string) => {
-
+        onLocationEndEditing={(location: string, types: SearchType[]) => {
+          const selectedTypes = types?.filter((type) => type.selected);
+          if (selectedTypes.length > 0 && location.length > 0) {
+            selectedTypes.forEach((type) => {
+              searchSubject.next({ term: type.value, location });
+            });
+          }
         }}
       />
       <BusinessList data={results} navigation={navigation} />
