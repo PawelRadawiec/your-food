@@ -34,6 +34,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@types/jest": "^27.0.3",
+    "@types/lodash": "^4.14.178",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
     "@types/react-native-indicators": "^0.16.1",

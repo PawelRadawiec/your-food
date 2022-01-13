@@ -129,7 +129,7 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
           setBusiness,
           getReviews,
           clearReviews,
-          deleteResultByType
+          deleteResultByType,
         },
       }}
     >
