@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Subject, concatMap } from 'rxjs';
+import { Subject, mergeMap } from 'rxjs';
 import BusinessList from '../components/BusinessList';
 import SearchForm from '../components/SearchForm';
 import BussinessContext from '../context/business/BusinesseContext';
@@ -16,7 +16,7 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
   useEffect(() => {
     const subscription = searchSubject
       .pipe(
-        concatMap((params: BussinessSearchParams) => {
+        mergeMap((params: BussinessSearchParams) => {
           const result = resultsMap.get(params?.term!);
           const limit = result?.params?.limit;
           params.limit = limit ? limit + 3 : 3
