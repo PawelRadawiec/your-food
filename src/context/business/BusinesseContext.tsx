@@ -1,5 +1,4 @@
 import React, { useReducer } from 'react';
-import { Action } from 'rxjs/internal/scheduler/Action';
 import YelpApi from '../../api/YelpApi';
 import { BussinessSearchParams } from '../../models/api/BusinessSearchParams';
 import { AppContext } from '../AppContex';
@@ -8,6 +7,7 @@ import { BusinessReview } from './models/BusinessReview';
 import { BussinessAction } from './models/BussinessActionModel';
 import { BussinessActionTypes } from './models/BussinessActionTypesModel';
 import { BussinessState, defaulBusinesstState } from './models/BussinessStateModel';
+import _cloneDeep from 'lodash/cloneDeep';
 
 const businessContext: AppContext<BussinessState> = {
   state: defaulBusinesstState,
@@ -23,9 +23,13 @@ const BussinessContext = React.createContext(businessContext);
 const bussinessReducer = (state: BussinessState, action: BussinessAction): BussinessState => {
   switch (action.type) {
     case BussinessActionTypes.SET_RESULTS:
-      return { ...state, results: action.payload, loading: false };
+      const resultsMap = _cloneDeep(state.resultsMap);
+      resultsMap.set(action.payload?.params?.term, { params: action.payload.params, businesses: action.payload.businesses });
+      return { ...state, loading: false, resultsMap };
     case BussinessActionTypes.SET_LOADING:
       return { ...state, loading: action.payload };
+    case BussinessActionTypes.SET_RESULTS_MAP:
+      return { ...state, resultsMap: action.payload };
     case BussinessActionTypes.SET_REVIEWS:
       return { ...state, reviews: action.payload };
     case BussinessActionTypes.REQUEST_ERROR:
@@ -36,8 +40,6 @@ const bussinessReducer = (state: BussinessState, action: BussinessAction): Bussi
       return { ...state, selectedPending: action.payload };
     case BussinessActionTypes.SET_REVIEWS_PENDING:
       return { ...state, reviewsPending: action.payload };
-    case BussinessActionTypes.SET_PARAMS:
-      return { ...state, params: action.payload };
     default:
       return state;
   }
@@ -50,43 +52,38 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
     dispach({ type: BussinessActionTypes.SET_BUSINESS, payload: business });
   };
 
+  const deleteResultByType = (type: string) => {
+    const resultsMapCopy = _cloneDeep(state.resultsMap);
+    resultsMapCopy.delete(type);
+    dispach({ type: BussinessActionTypes.SET_RESULTS_MAP, payload: resultsMapCopy });
+  };
+
   const requestError = (error: any) => {
     console.error(error);
     dispach({ type: BussinessActionTypes.REQUEST_ERROR });
   };
 
-  const search = async (params: BussinessSearchParams, increaseLimit?: boolean) => {
-    if (!params) {
-      return;
-    }
-    let response: any;
+  const search = async (params: BussinessSearchParams) => {
     dispach({
       type: BussinessActionTypes.SET_LOADING,
       payload: true,
     });
-    if (increaseLimit) {
-      params.limit = params.limit ? (params.limit += 10) : 10;
-    }
-    try {
-      response = await YelpApi.get('/search', {
-        params: {
-          limit: params.limit,
-          term: params.term,
-          location: params.location,
-        },
+    return YelpApi.get('/search', {
+      params: {
+        limit: params.limit,
+        term: params.term,
+        location: params.location,
+      },
+    })
+      .then((response) => {
+        dispach({
+          type: BussinessActionTypes.SET_RESULTS,
+          payload: { businesses: response.data?.businesses, params },
+        });
+      })
+      .catch((error) => {
+        requestError(error);
       });
-      dispach({
-        type: BussinessActionTypes.SET_RESULTS,
-        payload: response.data?.businesses,
-      });
-      dispach({
-        type: BussinessActionTypes.SET_PARAMS,
-        payload: params,
-      });
-    } catch (error) {
-      requestError(error);
-      throw error;
-    }
   };
 
   const getById = async (id: string, navigation?: any) => {
@@ -132,6 +129,7 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
           setBusiness,
           getReviews,
           clearReviews,
+          deleteResultByType
         },
       }}
     >
