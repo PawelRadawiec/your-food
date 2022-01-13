@@ -23,10 +23,9 @@ const BussinessContext = React.createContext(businessContext);
 const bussinessReducer = (state: BussinessState, action: BussinessAction): BussinessState => {
   switch (action.type) {
     case BussinessActionTypes.SET_RESULTS:
-      const type = state?.params?.term;
-      const resultsClone = _cloneDeep(state.resultsMap);
-      resultsClone.set(type, action.payload);
-      return { ...state, results: action.payload, loading: false, resultsMap: resultsClone };
+      const resultsMap = _cloneDeep(state.resultsMap);
+      resultsMap.set(action.payload?.params?.term, { params: action.payload.params, businesses: action.payload.businesses });
+      return { ...state, loading: false, resultsMap };
     case BussinessActionTypes.SET_LOADING:
       return { ...state, loading: action.payload };
     case BussinessActionTypes.SET_RESULTS_MAP:
@@ -41,8 +40,6 @@ const bussinessReducer = (state: BussinessState, action: BussinessAction): Bussi
       return { ...state, selectedPending: action.payload };
     case BussinessActionTypes.SET_REVIEWS_PENDING:
       return { ...state, reviewsPending: action.payload };
-    case BussinessActionTypes.SET_PARAMS:
-      return { ...state, params: action.payload };
     default:
       return state;
   }
@@ -66,7 +63,7 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
     dispach({ type: BussinessActionTypes.REQUEST_ERROR });
   };
 
-  const search = async (params: BussinessSearchParams, increaseLimit?: boolean) => {
+  const search = async (params: BussinessSearchParams) => {
     dispach({
       type: BussinessActionTypes.SET_LOADING,
       payload: true,
@@ -80,12 +77,8 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
     })
       .then((response) => {
         dispach({
-          type: BussinessActionTypes.SET_PARAMS,
-          payload: params,
-        });
-        dispach({
           type: BussinessActionTypes.SET_RESULTS,
-          payload: response.data?.businesses,
+          payload: { businesses: response.data?.businesses, params },
         });
       })
       .catch((error) => {
@@ -136,7 +129,7 @@ export const BusinesseProvider = ({ children }: { children: any }) => {
           setBusiness,
           getReviews,
           clearReviews,
-          deleteResultByType,
+          deleteResultByType
         },
       }}
     >

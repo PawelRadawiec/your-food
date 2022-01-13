@@ -2,11 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { BallIndicator } from 'react-native-indicators';
 import BussinessContext from '../context/business/BusinesseContext';
-import { BusinessesModel } from '../models/yelp/BusinessesModel';
 
-const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigation: any }) => {
+const BusinessList = ({ navigation }: { navigation: any }) => {
   const {
-    state: { selectedPending, params, loading, resultsMap },
+    state: { selectedPending, loading, resultsMap },
     actions,
   } = useContext(BussinessContext);
   const [resultKeys, setResultsKyes] = useState<string[]>([]);
@@ -24,14 +23,17 @@ const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigatio
             <Text style={styles.type}>{item}</Text>
             <FlatList
               showsHorizontalScrollIndicator={false}
+              onEndReachedThreshold={0.01}
               horizontal={true}
               onEndReached={() => {
                 if (!loading) {
-                  // todo - on end params
-                  // actions.search(params);
+                  const result = resultsMap.get(item);
+                  const limit = result?.params.limit;
+                  const params = { ...result?.params, limit: limit ? limit + 3 : 3 };
+                  actions.search(params);
                 }
               }}
-              data={resultsMap.get(item)}
+              data={resultsMap.get(item)?.businesses}
               renderItem={({ item }) => {
                 return (
                   <View style={styles.business}>
@@ -55,10 +57,9 @@ const BusinessList = ({ data, navigation }: { data: BusinessesModel[]; navigatio
                       <View>
                         <Text style={styles.city}>Reviews {item.review_count}</Text>
                       </View>
-                      <View>
-                        {/* @todo - fix horizontal*/}
-                        {/* <StarsList rating={Number(item.rating)} /> */}
-                      </View>
+
+                      {/* @todo - fix horizontal*/}
+                      {/* <StarsList rating={Number(item.rating)} /> */}
                     </View>
                     <Image
                       style={styles.image}

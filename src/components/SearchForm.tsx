@@ -119,9 +119,9 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     width: 400,
+    marginBottom: 10,
   },
   spinner: {
-    marginBottom: 10,
     marginLeft: 10,
   },
   type: {

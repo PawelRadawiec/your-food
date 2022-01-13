@@ -9,7 +9,7 @@ import { BussinessSearchParams } from '../models/api/BusinessSearchParams';
 
 const SearchScreen = ({ navigation }: { navigation: any }) => {
   const {
-    state: { loading, results },
+    state: { loading, resultsMap },
     actions,
   } = useContext(BussinessContext);
   const [searchSubject] = useState(new Subject<BussinessSearchParams>());
@@ -17,6 +17,9 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
     const subscription = searchSubject
       .pipe(
         concatMap((params: BussinessSearchParams) => {
+          const result = resultsMap.get(params?.term!);
+          const limit = result?.params?.limit;
+          params.limit = limit ? limit + 3 : 3
           return actions.search(params);
         })
       )
@@ -30,7 +33,9 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
       <SearchForm
         loading={loading}
         onSelect={(params: BussinessSearchParams) => {
-          searchSubject.next(params);
+          if (params?.location) {
+            searchSubject.next(params);
+          }
         }}
         onUnselected={(type: string) => {
           actions.deleteResultByType(type);
@@ -44,7 +49,7 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
           }
         }}
       />
-      <BusinessList data={results} navigation={navigation} />
+      <BusinessList navigation={navigation} />
     </View>
   );
 };
