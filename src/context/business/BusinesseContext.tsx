@@ -1,7 +1,6 @@
 import React, { useReducer } from 'react';
 import YelpApi from '../../api/YelpApi';
 import { BussinessSearchParams } from '../../models/api/BusinessSearchParams';
-import { AppContext } from '../AppContex';
 import { BusinessDetails } from './models/BusinessDetails';
 import { BusinessReview } from './models/BusinessReview';
 import { BussinessAction } from './models/BussinessActionModel';
@@ -9,13 +8,9 @@ import { BussinessActionTypes } from './models/BussinessActionTypesModel';
 import { BussinessState, defaulBusinesstState } from './models/BussinessStateModel';
 import _cloneDeep from 'lodash/cloneDeep';
 
-const businessContext: AppContext<BussinessState> = {
+const businessContext = {
   state: defaulBusinesstState,
-  actions: {
-    search: () => {},
-    getById: () => {},
-    setBusiness: () => {},
-  },
+  actions: {},
 };
 
 const BussinessContext = React.createContext(businessContext);
@@ -32,14 +27,14 @@ const bussinessReducer = (state: BussinessState, action: BussinessAction): Bussi
       return { ...state, resultsMap: action.payload };
     case BussinessActionTypes.SET_REVIEWS:
       return { ...state, reviews: action.payload };
-    case BussinessActionTypes.REQUEST_ERROR:
-      return { ...state, loading: false, selectedPending: { id: '', pending: false } };
     case BussinessActionTypes.SET_BUSINESS:
       return { ...state, business: action.payload, selectedPending: { pending: false, id: '' } };
     case BussinessActionTypes.SELECTED_PENDING:
       return { ...state, selectedPending: action.payload };
     case BussinessActionTypes.SET_REVIEWS_PENDING:
       return { ...state, reviewsPending: action.payload };
+    case BussinessActionTypes.REQUEST_ERROR:
+      return { ...state, loading: false, selectedPending: { id: '', pending: false } };
     default:
       return state;
   }
