@@ -54,10 +54,16 @@ const DetailsScreen = ({ navigation }: { navigation: any }) => {
           <Text style={styles.title}> {business?.is_closed ? 'No' : 'Yes'}</Text>
         </View>
         <StarsList rating={Number(business?.rating)} />
-        <View style={styles.detailsTitle}>
-          <MaterialIcons name="location-on" size={24} color="black" />
-          <Text style={styles.title}>{displayAddress}</Text>
-        </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Localization');
+          }}
+        >
+          <View style={styles.detailsTitle}>
+            <MaterialIcons name="location-on" size={24} color="black" />
+            <Text style={styles.title}>{displayAddress}</Text>
+          </View>
+        </TouchableOpacity>
       </View>
       <View>
         <Button
