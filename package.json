@@ -9,7 +9,8 @@
     "test": "jest --watchAll"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "testEnvironment": "jsdom"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.0.9",
@@ -21,7 +22,7 @@
     "jest-expo": "^43.0.1",
     "lodash": "^4.17.21",
     "react": "17.0.1",
-    "react-dom": "17.0.1",
+    "react-dom": "^17.0.1",
     "react-native": "0.64.3",
     "react-native-elements": "^3.4.2",
     "react-native-indicators": "^0.17.0",
@@ -30,16 +31,22 @@
     "react-native-screens": "^3.10.0",
     "react-native-web": "0.17.1",
     "react-test-renderer": "^17.0.2",
-    "rxjs": "^7.4.0"
+    "rxjs": "^7.4.0",
+    "save-dev": "^0.0.1-security"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
+    "@types/enzyme": "^3.10.11",
+    "@types/enzyme-adapter-react-16": "^1.0.6",
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.178",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
     "@types/react-native-indicators": "^0.16.1",
     "@types/react-test-renderer": "^17.0.1",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.6.6",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.6",
     "typescript": "~4.3.5"
   },
   "private": true
