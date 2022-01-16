@@ -8,6 +8,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 Enzyme.configure({ adapter: new Adapter() });
 
+const originalConsoleError = console.error;
+console.error = (message) => {
+  if (message.startsWith('Warning:')) {
+    return;
+  }
+  originalConsoleError(message);
+};
+
 describe('Stars list unit test', () => {
   it('should render my component', () => {
     const component = shallow(<StarsList rating={5} />);

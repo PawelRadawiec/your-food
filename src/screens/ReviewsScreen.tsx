@@ -7,13 +7,15 @@ import ReviewsList from '../components/ReviewsList';
 const ReviewsScreen = ({ navigation }: { navigation: any }) => {
   const {
     state: { reviews, reviewsPending, business },
-    actions: { getReviews, clearReviews },
+    actions,
   } = useContext(BussinessContext);
   useEffect(() => {
-    getReviews(business?.id);
+    if (business?.id) {
+      actions?.getReviews(business.id);
+    }
     navigation.setOptions({ title: business?.name ? `Reviews - ${business.name}` : '...' });
     return () => {
-      clearReviews();
+      actions?.clearReviews();
     };
   }, []);
   return (

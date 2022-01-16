@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Subject, mergeMap } from 'rxjs';
+import { Subject, mergeMap, of } from 'rxjs';
 import BusinessList from '../components/BusinessList';
 import SearchForm from '../components/SearchForm';
 import BussinessContext from '../context/business/BusinesseContext';
@@ -19,8 +19,8 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
         mergeMap((params: BussinessSearchParams) => {
           const result = resultsMap.get(params?.term!);
           const limit = result?.params?.limit;
-          params.limit = limit ? limit + 3 : 3
-          return actions.search(params);
+          params.limit = limit ? limit + 3 : 3;
+          return actions ? actions?.search(params) : of(null);
         })
       )
       .subscribe();
@@ -38,7 +38,7 @@ const SearchScreen = ({ navigation }: { navigation: any }) => {
           }
         }}
         onUnselected={(type: string) => {
-          actions.deleteResultByType(type);
+          actions?.deleteResultByType(type);
         }}
         onLocationEndEditing={(location: string, types: SearchType[]) => {
           const selectedTypes = types?.filter((type) => type.selected);

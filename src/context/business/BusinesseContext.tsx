@@ -7,10 +7,20 @@ import { BussinessAction } from './models/BussinessActionModel';
 import { BussinessActionTypes } from './models/BussinessActionTypesModel';
 import { BussinessState, defaulBusinesstState } from './models/BussinessStateModel';
 import _cloneDeep from 'lodash/cloneDeep';
+import { AxiosResponse } from 'axios';
 
-const businessContext = {
+const businessContext: {
+  state: BussinessState;
+  actions?: {
+    search: (params: BussinessSearchParams) => Promise<any>;
+    getById: (id: string, navigation?: any) => void;
+    setBusiness: (business: BusinessDetails) => void;
+    getReviews: (businessId: string) => void;
+    clearReviews: () => void;
+    deleteResultByType: (type: string) => void;
+  };
+} = {
   state: defaulBusinesstState,
-  actions: {},
 };
 
 const BussinessContext = React.createContext(businessContext);

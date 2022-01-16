@@ -30,7 +30,7 @@ const BusinessList = ({ navigation }: { navigation: any }) => {
                   const result = resultsMap.get(item);
                   const limit = result?.params.limit;
                   const params = { ...result?.params, limit: limit ? limit + 3 : 3 };
-                  actions.search(params);
+                  actions?.search(params);
                 }
               }}
               data={resultsMap.get(item)?.businesses}
@@ -43,7 +43,7 @@ const BusinessList = ({ navigation }: { navigation: any }) => {
                       <TouchableOpacity
                         onPress={() => {
                           if (!selectedPending.pending) {
-                            actions.getById(item.id, navigation);
+                            actions?.getById(item.id, navigation);
                           }
                         }}
                       >
