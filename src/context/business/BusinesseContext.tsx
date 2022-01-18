@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useContext, useReducer } from 'react';
 import YelpApi from '../../api/YelpApi';
 import { BussinessSearchParams } from '../../models/api/BusinessSearchParams';
 import { BusinessDetails } from './models/BusinessDetails';
@@ -7,18 +7,19 @@ import { BussinessAction } from './models/BussinessActionModel';
 import { BussinessActionTypes } from './models/BussinessActionTypesModel';
 import { BussinessState, defaulBusinesstState } from './models/BussinessStateModel';
 import _cloneDeep from 'lodash/cloneDeep';
-import { AxiosResponse } from 'axios';
+
+export interface BusinessActions {
+  search: (params: BussinessSearchParams) => Promise<any>;
+  getById: (id: string, navigation?: any) => void;
+  setBusiness: (business: BusinessDetails) => void;
+  getReviews: (businessId: string) => void;
+  clearReviews: () => void;
+  deleteResultByType: (type: string) => void;
+}
 
 const businessContext: {
   state: BussinessState;
-  actions?: {
-    search: (params: BussinessSearchParams) => Promise<any>;
-    getById: (id: string, navigation?: any) => void;
-    setBusiness: (business: BusinessDetails) => void;
-    getReviews: (businessId: string) => void;
-    clearReviews: () => void;
-    deleteResultByType: (type: string) => void;
-  };
+  actions?: BusinessActions;
 } = {
   state: defaulBusinesstState,
 };

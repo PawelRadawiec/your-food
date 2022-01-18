@@ -22,6 +22,7 @@ const BusinessList = ({ navigation }: { navigation: any }) => {
           <View>
             <Text style={styles.type}>{item}</Text>
             <FlatList
+              testID={item}
               showsHorizontalScrollIndicator={false}
               onEndReachedThreshold={0.01}
               horizontal={true}
